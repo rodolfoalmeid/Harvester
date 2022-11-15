@@ -46,6 +46,9 @@ cd Harvester-Lab
 
 git clone https://github.com/rancherlabs/harvester-equinix-terraform.git 
 
+** Credentials intruction to clone a repo from GitHub
+https://docs.github.com/en/get-started/getting-started-with-git/about-remote-repositories#cloning-with-https-urls
+
 ![image](https://user-images.githubusercontent.com/113181949/201944615-6017eee6-d118-4c7e-a195-ffb485689b0f.png)
 
 
