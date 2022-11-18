@@ -13,8 +13,16 @@ https://docs.harvesterhci.io/v1.1
 ---------------
 # Table of Contents
 
-1. [Harvester-Deployment](#Harvester-Deployment-using-Terraform)
+1. [Team training](#team-training)
+2. [Harvester-Deployment](#harvester-deployment-using-terraform)
 
+
+Team training
+====================
+
+https://confluence.suse.com/display/HARV/Harvester+Support+Training
+
+https://confluence.suse.com/display/HARV/Harvester+Support+and+Troubleshooting+Deep+Dive
 
 
 Harvester Deployment using Terraform
