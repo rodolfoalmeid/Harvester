@@ -19,6 +19,8 @@ This repository, will be just to host the tests I have done with Harvester softw
 
 1. [Team training](#team-training)
 2. [Harvester-Deployment](#harvester-deployment-using-terraform)
+3. [Harvester Training](#harvester-training)
+
 
 
 Team training
