@@ -202,54 +202,54 @@ Harvester Training
 
 ### Install a node and create a new cluster
 
-1 - Create a new Harvester cluster
+1. Create a new Harvester cluster
 
 ![image](https://user-images.githubusercontent.com/113181949/205142132-a52c7a12-21f3-49ba-99ce-50e2e6bdc5de.png)
 
 
-2 - Select the disk to install the OS
+2. Select the disk to install the OS
 
 ![image](https://user-images.githubusercontent.com/113181949/205142722-3b62aeb7-e465-43db-8b69-2172cb14f300.png)
 
 
-3 - Network Configuration
+3. Network Configuration
 
 ![image](https://user-images.githubusercontent.com/113181949/205143034-a1581a14-6f00-4994-84a5-a796e5343379.png)
 
-4 - Configure DNS Servers
+4. Configure DNS Servers
 
 ![image](https://user-images.githubusercontent.com/113181949/205143254-304d7226-e574-4c93-98d1-cd405da7a925.png)
 
-5 - Configure VIP
+5. Configure VIP
 
 ![image](https://user-images.githubusercontent.com/113181949/205143537-d56caaa9-9036-4acd-bcb7-e889076cd7c4.png)
 
-6 - Cluster Token
+6. Cluster Token
 
 ![image](https://user-images.githubusercontent.com/113181949/205143720-38ace35f-cd84-4237-abc9-013efca8fa4c.png)
 
-7 - Password to access the node
+7. Password to access the node
 
 ![image](https://user-images.githubusercontent.com/113181949/205143906-bcdc2f49-9a3b-40f1-965c-7f3368172601.png)
 
-8 - NTP Server
+8. NTP Server
 
 ![image](https://user-images.githubusercontent.com/113181949/205144057-004f72df-9689-4e40-b50d-2f6c7d7a700a.png)
 
-9 - Proxy
+9. Proxy
 
 ![image](https://user-images.githubusercontent.com/113181949/205144214-47bce43e-236d-4243-9c3b-eb75179e899e.png)
 
 
-10 - Import SSH Keys
+10. Import SSH Keys
 
 ![image](https://user-images.githubusercontent.com/113181949/205144256-f740a15a-5c91-4ae9-b9b1-639b3120da1a.png)
 
-11 - Remote Harvester Configuration
+11. Remote Harvester Configuration
 
 ![image](https://user-images.githubusercontent.com/113181949/205144629-96a35134-4cda-41d4-a54e-52921961dfe8.png)
 
-12 - 
+12. 
 
 
 
