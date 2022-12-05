@@ -20,6 +20,7 @@ This repository, will be just to host the tests I have done with Harvester softw
 1. [Team training](#team-training)
 2. [Harvester-Deployment](#harvester-deployment-using-terraform)
 3. [Harvester Training](#harvester-training)
+4. [Live Migration and Redundancy](#live-migration-and-redundancy)
 
 
 
@@ -253,4 +254,21 @@ Harvester Training
 
 
 
+Live Migration and Redundancy
+=============================
+
+https://docs.harvesterhci.io/v1.1/vm/live-migration
+
+
+#### Case issue: Harvester do not migrate VMs automatically when Network data goes down.
+Customer have their system running on version 1.1.1 and found a redundancy issue.
+The customer told that when they disabled the network interfaces for one node, on the switch, the VMs were not migrated to the other available node where network interfaces are up.
+Checking the node status they can see the interfaces down, and they are expecting that VMs were migrated to the available running nodes.
+The customer expectation is that when data interface is down for one node VMs running on that node should be migrated to fully operation node as in current situation the VMs are just not accessible and nothing happen.
+
+
+#### Guanbo Chen explanation: 
+This is not supported in the current stage, and I don't  think Harvester should play the role of auto-pilot, for some cases, the admin would prefer to fix the network issues manually, or sometimes, there are VMs that can't be migrated to the other node and should be kept on the existing one, IMO the preferred path should be
+ - configure related monitoring and alerts and send notification to the system admins.
+ - enable the node maintenance mode e.g., via calling the API or some custom automation tools/script, then the VMs will be migrated to the other node accordingly.
 
