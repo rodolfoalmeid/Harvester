@@ -21,6 +21,7 @@ This repository, will be just to host the tests I have done with Harvester softw
 2. [Harvester-Deployment](#harvester-deployment-using-terraform)
 3. [Harvester Training](#harvester-training)
 4. [Live Migration and Redundancy](#live-migration-and-redundancy)
+5. [Change UI settings through CLI](#changeuisettingsthroughcli)
 
 
 
