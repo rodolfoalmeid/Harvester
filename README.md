@@ -259,6 +259,7 @@ Live Migration and Redundancy
 
 https://docs.harvesterhci.io/v1.1/vm/live-migration
 
+December 2022.
 
 #### Case issue: Harvester do not migrate VMs automatically when Network data goes down.
 Customer have their system running on version 1.1.1 and found a redundancy issue.
@@ -271,4 +272,44 @@ The customer expectation is that when data interface is down for one node VMs ru
 This is not supported in the current stage, and I don't  think Harvester should play the role of auto-pilot, for some cases, the admin would prefer to fix the network issues manually, or sometimes, there are VMs that can't be migrated to the other node and should be kept on the existing one, IMO the preferred path should be
  - configure related monitoring and alerts and send notification to the system admins.
  - enable the node maintenance mode e.g., via calling the API or some custom automation tools/script, then the VMs will be migrated to the other node accordingly.
+
+Jira case was creted for RFE.
+
+
+Change UI settings through CLI
+===============================
+
+#### Case issue: Customer cannot create a new storage class because the fileds in the parameters tab to configure the new storage class.
+
+![storage_class](https://user-images.githubusercontent.com/113181949/207861795-402b33a3-b93a-44bd-9620-19c106cc0960.JPG)
+
+### Case Resolution:
+
+A Jira case was created for this issue and the engineering team recommended to change a parameter in the WebUI Settings.
+
+1- WebUI configuration.
+
+Go to Advanced >> Settings >> ui-source. Change the current value that should be auto to External. Please see the screenshots below.
+After changing it, please clean the cache data and reload your browser.
+
+![image](https://user-images.githubusercontent.com/113181949/207862841-2b85dee3-276b-4282-99c7-5f451af8e246.png)
+
+
+2 - If this change doesn't take effect, please press F12 on your browser to open the browser developer tool, and search for errors in console/network.
+
+Please check if there are errors in the network and console tabs, take some screenshots and send it to me.
+
+Customer changed the ui-source parameter to external and the webpage got inaccessible.
+
+Then it was recommended to change the ui parameter back to auto through the command line.
+
+```
+kubectl edit settings ui-source
+```
+
+![image](https://user-images.githubusercontent.com/113181949/207863292-485efb50-4201-4229-b602-73663494faaf.png)
+
+
+
+
 
