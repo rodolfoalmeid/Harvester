@@ -68,9 +68,9 @@ We have tried to manually copy the `ca.crt` content from the secret `snapshot-va
 After editing the validatingwebhookconfiguration harvester-snapshot-validation-webhook we noticed that the content of caBundle has been modified automatically. We couldn't identify what is changing it automaticalle but we couldn't make it work.
 
 ## Tentative #02
-We will try to run again the helm command related to the `validatingwebhookconfiguration`.
+Delete the secret and validatingwebhookconfiguration and run helm rollback.
 
-1. Delete the secret and the validating
+1. Delete the secret and the validating webhook configuration
 ```
 kubectl delete secret snapshot-validation-webhook-tls -n kube-system
 kubectl delete validatingwebhookconfigurations.admissionregistration.k8s.io harvester-snapshot-validation-webhook
@@ -85,8 +85,11 @@ helm history harvester -n harvester-system
 helm rollback harvester 1 -n harvester-system
 ```
 
+This action resolved the customer problem, but if the customer modify the standard settings, like the standard storage class, the helm rollback may fail.
+
+
 ## Tentative #03
-Manually create a new secret and validatingwebhookconfiguration.
+Manually create a new secret and validatingwebhookconfiguration. If step #02 fail, you can use this option. 
 
 1. Backup the secret/snapshot-validation-webhook-tls and validatingwebhookconfiguration/harvester-snapshot-validation-webhook
 ```
