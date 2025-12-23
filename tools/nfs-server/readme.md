@@ -19,8 +19,6 @@ The script has been tested and verified on:
 * **openSUSE Leap 15.6**
 * **Ubuntu 24.04 LTS**
 
-
-
 ## 🚀 Quick Run Instructions
 
 You can set up your NFS server in minutes by following these steps.
