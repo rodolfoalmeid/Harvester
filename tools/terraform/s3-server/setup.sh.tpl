@@ -1,0 +1,146 @@
+#!/bin/bash
+
+# ===============================================
+# S3 bucket Server Setup Script for openSUSE/SLES
+# ===============================================
+
+# Configuration Variables
+META_DIR="/mnt/garage/meta"
+BACKUP_DIR="/mnt/garage/data"
+S3_SERVICE="garage.service"
+GARAGE_VER="${garage_version}"
+SRV_IP="${srv_ip}"  
+S3_REGION="${bucket_region}"
+BUCKET_NAME="${bucket_name}"
+KEY_NAME="harvbucketkey"
+
+# Create RPC Secret
+RPC_SECRET=$(openssl rand -hex 32)
+
+# Check if the script is running as root
+if [ "$EUID" -ne 0 ]; then
+  echo "Error: Please run this script as root." > /opt/script-status.txt
+  exit 1
+fi
+
+echo "--- Starting S3 Bucket Server Configuration ---" >> /opt/script-status.txt
+
+# 1. Create the directory to store backups
+echo "[1/7] Creating directories..." >> /opt/script-status.txt
+mkdir -p "$META_DIR"
+mkdir -p "$BACKUP_DIR"
+
+# 2. Set directory permissions
+echo "[2/7] Setting permissions..." >> /opt/script-status.txt
+chown -R root:root "$META_DIR"
+chmod -R 700 "$META_DIR"
+chown -R root:root "$BACKUP_DIR"
+chmod -R 700 "$BACKUP_DIR"
+
+# 3. Install Garage S3 Bucket service
+echo "[3/7] Installing Garage S3 Bucket..." >> /opt/script-status.txt
+wget -q -O garage $GARAGE_VER
+if [ $? -ne 0 ]; then
+    echo "❌ Error: Fail to download Garage Binary. Check the URL the network connectivity." >> /opt/script-status.txt
+    exit 1
+fi
+chmod +x garage
+mv garage /usr/local/bin/
+
+# 4. Create Service Systemd file
+echo "[4/7] Creating Systemd Service..." >> /opt/script-status.txt
+cat > /etc/systemd/system/garage.service <<EOF
+[Unit]
+Description=Garage S3 Server
+After=network.target
+Wants=network.target
+
+[Service]
+Environment='RUST_LOG=garage=info' 'RUST_BACKTRACE=1'
+ExecStart=/usr/local/bin/garage server
+StateDirectory=garage
+Restart=always
+LimitNOFILE=42000
+User=root
+Group=root
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+# 5. Create the configuration file
+echo "[5/7] Creating Config File..." >> /opt/script-status.txt
+cat > /etc/garage.toml <<EOF
+metadata_dir = "$META_DIR"
+data_dir = "$BACKUP_DIR"
+db_engine = "sqlite"
+
+replication_factor = 1
+
+rpc_bind_addr = "[::]:3901"
+rpc_public_addr = "$SRV_IP:3901"
+rpc_secret = "$RPC_SECRET"
+
+[s3_api]
+s3_region = "$S3_REGION"
+api_bind_addr = "[::]:3900"
+root_domain = ".s3.garage.local"
+
+[s3_web]
+bind_addr = "[::]:3902"
+root_domain = ".web.garage.local"
+index = "index.html"
+
+[k2v_api]
+api_bind_addr = "[::]:3904"
+
+[admin]
+api_bind_addr = "[::]:3903"
+admin_token = "$(openssl rand -base64 32)"
+metrics_token = "$(openssl rand -base64 32)"
+EOF
+
+# 6. Enable and start the service
+echo "[6/7] Starting Service..." >> /opt/script-status.txt
+systemctl daemon-reload
+systemctl enable --now $S3_SERVICE > /dev/null 2>&1
+sleep 5
+
+# Check if service is running successfully
+if systemctl is-active --quiet "$S3_SERVICE"; then
+    echo "      $S3_SERVICE is running." >> /opt/script-status.txt
+else
+    echo "      $S3_SERVICE is NOT running. Check logs with: journalctl -u $S3_SERVICE" >> /opt/script-status.txt
+    exit 1
+fi
+sleep 5
+
+# 7. Initialize Layout
+echo "[7/7] Initializing Garage Layout..." >> /opt/script-status.txt
+NODE_ID=$(garage status | grep "ID:" | awk '{print $2}' | head -n 1)
+garage layout assign -z Zone1 -c 50G "$NODE_ID" > /dev/null 2>&1
+sleep 2
+garage layout apply --version 1 > /dev/null 2>&1
+sleep 2
+
+# Create Bucket and Keys
+garage bucket create "$BUCKET_NAME" > /dev/null 2>&1
+KEY_OUTPUT=$(garage key create "$KEY_NAME")
+garage bucket allow --read --write --owner "$BUCKET_NAME" --key "$KEY_NAME" > /dev/null 2>&1
+
+echo "---"
+echo "✅ Configuration completed successfully!" >> /opt/script-status.txt
+echo "---"
+
+# Extract keys
+ACCESS_KEY=$(echo "$KEY_OUTPUT" | grep "Key ID" | awk '{print $3}')
+SECRET_KEY=$(echo "$KEY_OUTPUT" | grep "Secret key" | awk '{print $3}')
+
+cat <<EOF > /opt/harvester-s3bucket-settings.txt
+echo "Harvester Settings Info:"
+echo "Endpoint          = http://$SRV_IP:3900"
+echo "Bucket Name       = $BUCKET_NAME"
+echo "Bucket Region     = $S3_REGION"
+echo "Access Key ID     = $ACCESS_KEY"
+echo "Secret Access Key = $SECRET_KEY"
+EOF
