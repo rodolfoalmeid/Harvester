@@ -7,12 +7,6 @@ provider "kubernetes" {
   config_path    = var.harvester_kubeconfig 
 }
 
-resource "kubernetes_namespace_v1" "vm_namespace" {
-  metadata {
-    name = var.namespace
-  }
-}
-
 # --- DATA SOURCES ---
 
 data "harvester_clusternetwork" "mgmt" {
@@ -20,6 +14,11 @@ data "harvester_clusternetwork" "mgmt" {
 }
 
 # --- RESOURCES ---
+resource "kubernetes_namespace_v1" "vm_namespace" {
+  metadata {
+    name = var.namespace
+  }
+}
 
 resource "harvester_ssh_key" "myssh" {
   name       = "terraform-ssh-key"
